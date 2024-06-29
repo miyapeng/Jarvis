@@ -25,8 +25,8 @@ def get_chat_access_token():
     """
     使用 API Key，Secret Key 获取access_token，替换下列示例中的应用API Key、应用Secret Key
     """
-    API_Key = "gSHwOQ6DqW6ws8gBpIx3h6US"
-    Secret_Key = "Wv32hkVbEJHI4laRNEQJ1dPEvQc5qZdo"
+    API_Key = ""
+    Secret_Key = ""
     url = "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=" + API_Key + "&client_secret=" + Secret_Key
 
     #url = "https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=gSHwOQ6DqW6ws8gBpIx3h6US&client_secret=Wv32hkVbEJHI4laRNEQJ1dPEvQc5qZdo"
@@ -54,9 +54,9 @@ def text2speech(text):
 
 
 def speech2text(file_path):
-    APP_ID = "79280882"
-    API_KEY = "fgYSaZtkhsGNoX1Qmd3yeEcR"
-    SECRET_KEY = "JExQ3RD4aM3safFlUxbefVB17ireZQKm"
+    APP_ID = ""
+    API_KEY = ""
+    SECRET_KEY = ""
 
     client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
     with open(file_path, 'rb') as f:
@@ -72,7 +72,7 @@ def speech2text(file_path):
 
 def make_json_request(chat_list):
     chat_access_token = get_chat_access_token()
-    chat_url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/ernie-lite-8k?access_token=" + chat_access_token
+    chat_url = "" + chat_access_token
     headers = {
         'Content-Type': 'application/json'
     }
