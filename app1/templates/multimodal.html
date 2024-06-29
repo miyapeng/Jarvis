@@ -1,0 +1,196 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Web</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        .btn-round {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-round .ripple {
+            width: 20px;
+            height: 20px;
+            position: absolute;
+            background: rgba(255, 255, 255, 0.6);
+            display: block;
+            content: '';
+            border-radius: 50%;
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            from {
+                transform: scale(1);
+                opacity: 1;
+            }
+            to {
+                transform: scale(20);
+                opacity: 0;
+            }
+        }
+
+        .text-input {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .text-input textarea {
+            border-radius: 10px;
+            background-color: #e0e0e0; /* 更深的灰色背景 */
+            border: none; /* 去掉边框线 */
+            resize: none;
+            padding: 10px; /* 添加内边距 */
+            width: 100%;
+            height: 60px; /* 减小高度 */
+            padding-left: 30px; /* 为曲别针图标留出空间 */
+            padding-right: 30px;
+        }
+
+        .text-input .file-input {
+            position: absolute;
+            left: 10px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .text-input .file-input::before {
+            content: '\f03e'; /* 使用 Font Awesome 的曲别针图标 */
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            font-size: 20px;
+            color: #121415;
+            padding-left: 10px; /* 在这里添加左边距 */
+        }
+
+        .text-input .file-input input {
+            display: none;
+        }
+
+        .text-input img {
+            display: none;
+            max-width: 25%; /* 将选中的图片缩小 */
+            margin-top: 10px;
+        }
+
+    </style>
+    
+</head>
+<body>
+    <div class="container-fluid vh-100 d-flex">
+        <div class="sidebar bg-light p-3 d-flex flex-column align-items-center">
+            <img src="{% static 'img/logo.png' %}" alt="Logo" class="mb-3" width="240"> <!-- 在这里放置你的logo -->
+            <ul class="nav flex-column">
+                <li class="nav-item mb-3"><a id="normal-mode" class="btn btn-primary" href="{% url 'index' %}">普通模式</a></li>
+                <li class="nav-item mb-3"><a id="multimodal-mode" class="btn btn-primary" href="{% url 'multimodal' %}">多模态模式</a></li>
+                <li class="nav-item mb-3"><a id="motion-mode" class="btn btn-primary" href="{% url 'motion' %}">情感识别模式</a></li>
+            </ul>
+        </div>
+        <div class="main-content flex-grow-1 p-4">
+            <div id="interactive-mode-content" class="mode-content active">
+                <div class="text-output border p-3 mb-3" id="text-output">
+                    <!-- 这里将显示输出 -->
+                </div>
+                <div class="text-input border-0 p-3 mb-3">
+                    <label class="file-input">
+                        <input type="file" id="image-input" accept="image/*">
+                    </label>
+                    <textarea id="text-input" placeholder="在这里输入..."></textarea>
+                    <img id="uploaded-image" src="#" alt="Uploaded Image">
+                </div>
+                <div class="action-button mb-3" style="display: flex; justify-content: center; align-items: center;">
+                    <button id="action-button" class="btn btn-primary btn-round" style="width: 100px; height: 100px; font-size: 24px;">提交</button>
+                </div>
+                <audio id="audio-player" controls style="display: block; margin-left: auto; margin-right: auto;"></audio>
+            </div>
+            <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+            <script>
+        $(document).ready(function(){
+        $("#action-button").click(function(){
+        // 获取 text-input 元素中的文本内容
+        var textInput = document.getElementById('text-input').value;
+
+        // 创建一个FormData对象来存储数据
+        var formData = new FormData();
+        formData.append('user_input', textInput);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        // 如果用户选择了图片，将它添加到FormData对象中
+        if (selectedFile) {
+            formData.append('image', selectedFile);
+        }
+
+        // 发送 AJAX 请求到 /multimodal/ 端点
+        $.ajax({
+            type: "POST",
+            url: "/multimodal/",
+            data: formData,
+            processData: false,  // 告诉jQuery不要处理数据
+            contentType: false,  // 告诉jQuery不要设置contentType
+            success: function(response){
+                const textOutput = document.getElementById('text-output');
+                textOutput.innerHTML = response.response;
+
+                // 获取更新后的 text-output 元素中的文本内容
+                var updatedTextOutput = textOutput.innerText;
+
+                // 发送 AJAX 请求到 /synthesize_and_play/ 端点
+                $.ajax({
+                    url: '/synthesize_and_play/',
+                    type: 'post',
+                    data: {
+                        'text': updatedTextOutput,  // 使用更新后的 text-output 的内容
+                        'voice': 'zh-CN-XiaoyiNeural',
+                        'file_path': 'hello.mp3',
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'
+                    },
+                    success: function(response){
+                        // 使用返回的音频文件URL来播放音频
+                        $("#audio-player").attr("src", response.audio_url);
+                        $("#audio-player")[0].play();
+                    }
+                    });
+                    }
+                });
+                });
+            });
+
+                let selectedFile = null;  // 创建一个全局变量来存储用户选择的图片
+
+                document.getElementById('image-input').addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.getElementById('uploaded-image');
+                            img.src = e.target.result;
+                            img.style.display = 'block';
+                        }
+                        reader.readAsDataURL(file);
+                        selectedFile = file;  // 将用户选择的图片存储在全局变量中
+                    }
+                });
+            </script>
+        </div>        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="{% static 'js/scripts.js' %}"></script>
+{#    ？？？？#}
+</body>
+</html>

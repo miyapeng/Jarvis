@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jarvis Web</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/chat_styles.css' %}">
+</head>
+<body>
+    <div class="container-fluid vh-100 d-flex">
+        <div class="sidebar bg-light p-3 d-flex flex-column align-items-center">
+{#            <img src="{% static 'img/logo.png' %}" alt="Logo" class="mb-3"  width="240"> <!-- 在这里放置你的logo -->#}
+            <img src="{% static 'img/logo.png' %}" alt="Logo" class="mb-3"  width="240">
+            <ul class="nav flex-column">
+                <li class="nav-item mb-3"><a id="normal-mode" class="btn btn-primary" href="{% url 'index' %}">普通模式</a></li>
+                <li class="nav-item mb-3"><a id="multimodal-mode" class="btn btn-primary" href="{% url 'multimodal' %}">多模态模式</a></li>
+                <li class="nav-item mb-3"><a id="motion-mode" class="btn btn-primary" href="{% url 'motion' %}">情感识别模式</a></li>
+            </ul>
+        </div>
+        <div class="main-content flex-grow-1 p-4">
+            <div id="interactive-mode-content" class="mode-content active">
+                <div class="text-output border p-3 mb-3 h-75" id="text-output">
+                    <!-- 这里将显示输出 -->
+                <div id="chat_list" class="overflow-auto" style="height: 600px">
+
+{#                    <div class="chat_right">#}
+{#                        <div class="chat_right_item_1 ">jarvis</div>#}
+{#                            <div class="chat_right_item_2 ">#}
+{#                                    <div class="chat_right_content">#}
+{#                                        你好#}
+{#                                    </div>#}
+{#                             </div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="chat_left">#}
+{#                        <div class="chat_left_item_1 ">jarvis</div>#}
+{#                            <div class="chat_left_item_2 ">#}
+{#                                    <div class="chat_left_content">#}
+{#                                        你好，我是 Jarvis，我可以帮助你解决问题#}
+{#                                    </div>#}
+{#                             </div>#}
+{#                    </div>#}
+{##}
+{#                    <div class="chat_right">#}
+{#                        <div class="chat_right_item_1 ">jarvis</div>#}
+{#                            <div class="chat_right_item_2 ">#}
+{#                                    <div class="chat_right_content">#}
+{#                                        我需要你的帮助#}
+{#                                    </div>#}
+{#                             </div>#}
+{#                    </div>#}
+
+                </div>
+                </div>
+                <div>
+                    <canvas id="visualizer" width="45" height="55"></canvas>
+                </div>
+                <div class="action-button" style="display: flex; justify-content: center; align-items: center;">
+                    <audio controls class="audio-player"></audio>
+                    <button id="action-button" class="btn btn-primary record-btn">
+                        {% csrf_token %}
+                        开始录音
+                    </button>
+                    <a id="download" download="record.aac"></a>
+                    <!-- 当用户点击这个按钮时，它将开始运动，再次点击，它将停止运动 -->
+                </div>
+            </div>
+        </div>        
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-5.3.3-dist/js/bootstrap.js' %}"></script>
+{#    <script src="{% static 'js/scripts.js' %}"></script>#}
+    <script src="{% static 'js/record.js' %}"></script>
+</body>
+</html>

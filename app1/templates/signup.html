@@ -1,0 +1,93 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+</head>
+
+<body>
+
+{#<form method="post" action="/login/">#}
+{##}
+{#    {% csrf_token %}#}
+{##}
+{#    <input#}
+{#        type="text"#}
+{#        name="username"#}
+{#        placeholder="用户名"#}
+{#        class="form-control"#}
+{#    >#}
+{##}
+{#    <input#}
+{#        type="password"#}
+{#        name="password"#}
+{#        placeholder="密码"#}
+{#        class="form-control"#}
+{#    >#}
+{##}
+{#    <button class="btn btn-primary">登录</button>#}
+{##}
+{#    <span>{{ error_msg }}</span>#}
+{##}
+{#</form>#}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Jarvis</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">login</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="#">sign up</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="b-example-divider"></div>
+
+<div class="modal modal-sheet position-static d-block bg-body-secondary p-4 py-md-5" tabindex="-1" role="dialog" id="modalSignin">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header p-5 pb-4 border-bottom-0">
+        <h1 class="fw-bold mb-0 fs-2">Welcome</h1>
+      </div>
+
+      <div class="modal-body p-5 pt-0">
+        <form class="" method="post" action="">
+            {% csrf_token %}
+          <div class="form-floating mb-3">
+            <input type="text" name="username" class="form-control rounded-3" id="floatingInput" placeholder="">
+            <label for="floatingInput">username</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="email" name="email" class="form-control rounded-3" id="floatingInput" placeholder="name@example.com">
+            <label for="floatingInput">Email address</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" name="password" class="form-control rounded-3" id="floatingPassword" placeholder="Password">
+            <label for="floatingPassword">Password</label>
+          </div>
+          <button class="w-100 mb-2 btn btn-lg rounded-3 btn-primary" type="submit">Sign up</button>
+            <span style="color: #58151c">{{ error_msg }}</span>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-5.3.3-dist/js/bootstrap.js' %}"></script>
+
+</body>
+</html>

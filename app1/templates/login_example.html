@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=2.0, user-scalable=yes" />  
+<title>登录</title>
+
+<!-- Bootstrap -->
+<link href="css/bootstrap.min.css" rel="stylesheet"  type="text/css">
+<link href="css/main-login.css" rel="stylesheet" type="text/css">
+<link type="text/css" href="css/blue.css" rel="stylesheet">
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+  <script src="http://cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+  <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+</head>
+<body>
+
+<div class="login-form-box">
+
+	<div class="loginlogoimg">
+		 <img src="image/login_logo.png">
+	</div>	
+
+	<div class="login-box-form-box">
+		 <div id="tab-js-h4box">
+			 <h4 class="login-title activetab-show">登录</h4>
+			 <h4 class="login-title">快速登录</h4>
+		 </div>
+		 <div id="tab-js-formbox">
+			 <form id="LoginForm" name="LoginForm" class="login-box-form" style="display: block;">
+			  <div class="form-group">
+				<label>用户名</label>
+				<input type="text" class="form-control" id="LoginNameInput"> 
+			  </div>
+			  <div class="form-group">
+				<label>密码</label>
+				<input type="password" class="form-control" id="LoginPasswordInput">
+			  </div>
+			  <div class="reg-rempas">
+			    <div class="rempasbox">
+					<input type="checkbox" checked class="rememberPassword" id="LoginrememberPassword">
+					<span class="rempas">记住账号</span>
+				</div>
+			  	<a href="reg-form.html" class="ljzc">立即注册</a>
+			  </div>
+			  <button id="LoginButton" type="submit" class="btn login-btn">登录</button>
+			 </form>
+			 
+			 <form id="fastLoginForm" name="LoginForm" class="login-box-form">
+			  <div class="form-group">
+				<label>用户名</label>
+				<input type="text" class="form-control" id="fastLoginNameInput"> 
+			  </div>
+			  <div class="form-group">
+				<label>密码</label>
+				<div class="getcodebox">
+					<input type="password" class="form-control code-input" id="fastLoginPasswordInput">
+					<input type="button" id="get-code-input" value="发送验证码" onClick="getcode(this)"/> 
+				</div>	
+			  </div>
+			  <div class="reg-rempas">
+			    <div class="rempasbox">
+					<input type="checkbox" checked class="rememberPassword" id="fastLoginrememberPassword">
+					<span class="rempas">记住账号</span>
+				</div>
+			  	<a href="signup.html" class="ljzc">立即注册</a>
+			  </div>
+			  <button id="fastLoginButton" type="submit" class="btn login-btn">登录</button>
+			 </form>
+		 </div>	
+	</div>
+	<div class="login-form-box-bottom">
+		<p>版权所有：江西省人民医院远程会诊中心  地址：南昌市东湖区爱国路92号</p>
+		<p>电话：0791-86893120  0791-86897042  邮箱：jx86897042@163.com  建议在IE8浏览器下使用本系统</p>
+	</div>
+
+</div> 
+
+<script src="js/jquery.min.js"></script>
+<script src="js/icheck.min.js"></script>
+<script src="js/jquery.cookie.js"></script>
+
+<script type="text/javascript">
+	//初始化页面时验证是否记住了密码 
+	$(document).ready(function() { //console.log($.cookie("LoginNameInput"));console.log($.cookie("fastLoginNameInput"));
+		if ($.cookie("loginrememberflag") == "true") { 
+			$("#LoginrememberPassword").iCheck('check');
+			$("#LoginNameInput").val($.cookie("LoginNameInput")); 
+		} 
+		if ($.cookie("fastloginrememberflag") == "true") { 
+			$("#fastLoginrememberPassword").iCheck('check');
+			$("#fastLoginNameInput").val($.cookie("fastLoginNameInput")); 
+		} 
+	}); 
+	//保存用户信息 
+	$("#LoginrememberPassword").on('ifChecked', function(event){
+		var LoginNameInput = $("#LoginNameInput").val(); 
+		$.cookie("loginrememberflag", "true", { expires: 365}); 
+		$.cookie("LoginNameInput", LoginNameInput, {expires: 365}); 
+	});	
+	$("#LoginrememberPassword").on('ifUnchecked', function(event){	
+		$.removeCookie('loginrememberflag');
+		$.removeCookie('LoginNameInput');
+	});	
+	
+	$("#fastLoginrememberPassword").on('ifChecked', function(event){
+		var fastLoginNameInput = $("#fastLoginNameInput").val(); 
+		$.cookie("fastloginrememberflag", "true", { expires: 365}); 
+		$.cookie("fastLoginNameInput", fastLoginNameInput, {expires: 365}); 
+	});	
+	$("#fastLoginrememberPassword").on('ifUnchecked', function(event){	
+		$.removeCookie('fastloginrememberflag');
+		$.removeCookie('fastLoginNameInput');
+	});	
+	
+	var targetID = "00000036-0102-2100-0000-000000000000";
+	function getUserCenterActionUrl(actionName){
+		return "/proxy/http/uc.tm.api.519e.com.cn/8000/Account/"+actionName;
+		//return "http://uc.tm.api.519e.com.cn:8000/Account/"+actionName;
+	}
+
+	function putAction(url,data,successFunc,errorFunc){
+		$.ajax({
+			url : url,
+			type : 'POST',
+			data : JSON.stringify(data),
+			dataType : 'json',
+			contentType : 'application/json',
+			success : successFunc,
+			error : function(xhr, error, exception) {
+				alert(exception.toString());
+				if (typeof errorFunc === 'function')
+					errorFunc(xhr, error, exception);
+			}
+		});
+	}
+
+	$(document).ready(function(){
+
+		$("#LoginForm").submit(function(e){
+		
+			if($('#LoginrememberPassword').is(':checked')) {
+				$.cookie("loginrememberflag", "true", { expires: 365}); 
+				$.cookie("LoginNameInput", $("#LoginNameInput").val(), {expires: 365}); 
+			}
+
+			var data = {
+				LoginName :$("#LoginNameInput").val() + ".medical-institution.telemedicine.bitcare",
+				LoginPassword:$("#LoginPasswordInput").val()
+			};
+			var success = function (data) {
+				if(data.StatusCode !=0){
+					alert(data.StatusCode + data.Message);
+					return;
+				}
+				window.location.href="/#Account/Auth/"+targetID+"/"+data.Result.AuthToken;
+			};
+			putAction( getUserCenterActionUrl("AuthToken_Create"),data,success);
+			e.preventDefault();
+		});
+
+		$("#fastLoginForm").submit(function(e){
+		
+			if($('#fastLoginrememberPassword').is(':checked')) {
+				$.cookie("fastloginrememberflag", "true", { expires: 365}); 
+				$.cookie("fastLoginNameInput", $("#fastLoginNameInput").val(), {expires: 365}); 
+			}
+			
+			var data = {
+				LoginName :$("#fastLoginNameInput").val() + ".medical-institution.telemedicine.bitcare",
+				LoginPassword:$("#fastLoginPasswordInput").val(),
+				IsTemporaryPassword:true
+			};
+			var success = function (data) {
+				if(data.StatusCode !=0){
+					alert(data.StatusCode + data.Message);
+					return;
+				}
+				window.location.href="/#Account/Auth/"+targetID+"/"+data.Result.AuthToken;
+			};
+			putAction( getUserCenterActionUrl("AuthToken_Create"),data,success);
+			e.preventDefault();
+		});
+
+		$("#tab-js-h4box .login-title").on("click", function(e){
+			$(this).siblings(".login-title").removeClass("activetab-show").end().addClass("activetab-show");
+			var indexing = $("#tab-js-h4box .login-title").index($(this));
+			$(".login-box-form").eq(indexing).siblings(".login-box-form").hide().end().show();
+		});
+
+		$('.rememberPassword').iCheck({
+			checkboxClass: 'icheckbox_minimal-blue',
+			increaseArea: '18%' // optional
+		});
+		
+	});
+	
+	
+	var countdown=60; 
+	function getcode(obj) { 
+		var fastLoginNameInput = $("#fastLoginNameInput").val();
+		if(!fastLoginNameInput){
+			alert("请填写用户名！");
+			return;
+		}
+		if (countdown == 0) { 
+			obj.removeAttribute("disabled");    
+			obj.value="重发验证码"; 
+			obj.className="";
+			countdown = 60; 
+			return;
+		} else { 
+			if(countdown == 60){
+				var data = {
+					LoginName :$("#fastLoginNameInput").val() + ".medical-institution.telemedicine.bitcare"
+				};
+			
+				$.ajax({
+					url : "http://tm.519e.com.cn/proxy/http/inst.tm.api.519e.com.cn/8000/Institution/Api/Account_TemporaryPassword_Post",
+					type : 'POST',
+					data : JSON.stringify(data),
+					dataType : 'json',
+					contentType : 'application/json',
+					success : function (data) {
+						if(data.StatusCode !=0){
+							alert(data.StatusCode + data.Message);
+						}else{
+							alert("您的临时登录密码已发送到您的手机请注意查收！");
+						}
+					},
+					error : function(xhr, error, exception) {
+						alert(exception.toString());
+						if (typeof errorFunc === 'function')
+							errorFunc(xhr, error, exception);
+					}
+				});
+			}
+			
+			obj.setAttribute("disabled", true); 
+			obj.value="剩余" + countdown + "秒"; 
+			obj.className="getcode-class";
+			countdown--; 
+		} 
+		setTimeout(function() {getcode(obj) },1000) 
+	}
+</script>
+
+
+</body>
+</html>

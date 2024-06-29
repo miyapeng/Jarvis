@@ -1,0 +1,24 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-5.3.3-dist/css/bootstrap.css' %}">
+</head>
+<body>
+    <h1>Jarvis</h1>
+    <div>{{ name }}</div>
+    <div>
+        {% for item in role %}
+            <div>{{ item }}</div>
+        {% endfor %}
+    </div>
+
+<script src="{% static 'js/jquery-3.7.1.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-5.3.3-dist/js/bootstrap.js' %}"></script>
+
+</body>
+</html>
